@@ -1,0 +1,13 @@
+id;category;difficulty;question;correct;wrong1;wrong2;wrong3;wrong4;wrong5;wrong6;wrong7;wrong8;wrong9;wrong10;explanation
+q1;Potions;easy;Quel ingrédient stabilise le mieux une potion de soin basique ?;Pétales de lune séchés;Poudre de cuivre;Sel noir;Écorce de chêne;Cendre froide;;;;;;;Les pétales de lune apportent une base douce et stable.
+q2;Sorts;medium;Quel geste est recommandé pour un sort de lumière durable ?;Spirale lente vers le haut;Coup sec vers le bas;Double cercle horizontal;Pointe immobile;Arc rapide latéral;;;;;;;Une spirale lente soutient la canalisation d’énergie.
+q3;Créatures;easy;Quelle créature est attirée par les clochettes d’argent ?;Renard-brume;Taupe runique;Corbeau d’ambre;Lézard des puits;Chien des marais;;;;;;;Le renard-brume suit les sons clairs et réguliers.
+q4;Histoire magique;hard;Dans les chroniques, quel pacte a limité les duels d’élèves ?;Le Serment des Quatre Tours;Le Code des Lanternes;L’Édit des Brasiers;La Charte des Miroirs;Le Traité des Plumes;;;;;;;Le Serment des Quatre Tours impose arbitres et zones dédiées.
+q5;Botanique;medium;Quelle plante imaginaire fleurit uniquement au crépuscule ?;Néphèle nocturne;Rose ferrique;Menthe solaire;Ortie d’étain;Lierre des docks;;;;;;;La néphèle nocturne s’ouvre lorsque la lumière baisse.
+q6;Potions;hard;"Pour calmer un chaudron instable, on ajoute d’abord...";Une goutte d’huile d’iris;Un cristal de sel;Deux feuilles fraîches;Une braise active;Trois graines moulues;;;;;;;L’huile d’iris réduit la turbulence avant tout autre ajout.
+q7;Sorts;easy;Quel sort utilitaire sert surtout à sécher un parchemin ?;Sicca;Lumis;Ferro;Nodus;Ventis;;;;;;;Sicca retire l’humidité sans chauffer le support.
+q8;Académie;medium;Combien de veilleuses sont conseillées dans un dortoir d’apprentis ?;4;1;2;7;10;;;;;;;Quatre veilleuses offrent un éclairage équilibré.
+q9;Créatures;hard;Quelle défense est efficace contre une nuée de mites runiques ?;Cercle de craie salée;Flamme bleue continue;Bruit métallique fort;Vapeur sucrée;Lanterne rouge;;;;;;;La craie salée perturbe leurs motifs runiques.
+q10;Artefacts;medium;Quel objet conserve le mieux un message magique 24h ?;Capsule de verre gravée;Ruban de lin;Tablette de cire;Fil de cuivre nu;Feuille de bouleau;;;;;;;Le verre gravé limite les pertes d’empreinte magique.
+q11;Botanique;easy;Quelle graine germe le plus vite en serre enchantée ?;Grain d’aube;Noyau d’ombre;Fève ferrée;Perle d’if;Noix de givre;;;;;;;Le grain d’aube réagit très vite à l’humidité enchantée.
+q12;Histoire magique;hard;Quel symbole marquait les salles neutres de médiation ?;Un cercle ouvert;Une couronne fermée;Une lance verticale;Un triangle plein;Deux lignes croisées;;;;;;;Le cercle ouvert représentait l’écoute et l’accès libre.
