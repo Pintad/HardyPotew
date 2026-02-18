@@ -4,11 +4,17 @@ Application de quiz hors-ligne sur un univers de magie fictif (non officiel, san
 
 ## Fonctionnalités
 - Écran d'accueil:
-  - Nombre de propositions: **2 / 4 / 8 / 12**.
   - Mode **Quiz** (10 questions aléatoires) ou **Entraînement** (filtre catégorie optionnel).
+- Écran question:
+  - Le joueur choisit le nombre de propositions **pour chaque question**: **2 / 4 / 8 / 12**.
 - Partie:
   - Score en direct et progression (`Question X/10`).
-  - Bonus difficulté: `easy=+1`, `medium=+2`, `hard=+3`.
+  - Bonus difficulté de base: `easy=1`, `medium=2`, `hard=3`.
+  - Multiplicateur selon le nombre de propositions de la question:
+    - 2 choix: x4
+    - 4 choix: x3
+    - 8 choix: x2
+    - 12 choix: x1
   - Feedback après validation + explication facultative.
   - Gestion du manque de mauvaises réponses: **rétrogradation automatique** + message utilisateur.
 - Résultats:

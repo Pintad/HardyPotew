@@ -7,6 +7,7 @@ import com.example.wizardquiz.data.QuestionRepository
 import com.example.wizardquiz.domain.PreparedQuestion
 import com.example.wizardquiz.domain.Question
 import com.example.wizardquiz.domain.QuizMode
+import com.example.wizardquiz.domain.ScoringPolicy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class HomeSettings(
-    val choiceCount: Int = 4,
     val mode: QuizMode = QuizMode.QUIZ,
     val selectedCategory: String? = null,
     val categories: List<String> = emptyList()
@@ -26,11 +26,13 @@ data class QuizUiState(
     val settings: HomeSettings = HomeSettings(),
     val questions: List<Question> = emptyList(),
     val index: Int = 0,
+    val currentChoiceCount: Int = 4,
     val preparedQuestion: PreparedQuestion? = null,
     val selectedAnswer: String? = null,
     val answerSubmitted: Boolean = false,
     val score: Int = 0,
-    val downgradeMessage: String? = null
+    val downgradeMessage: String? = null,
+    val lastAwardedPoints: Int = 0
 ) {
     enum class Screen { Home, Question, Result }
 
@@ -57,10 +59,6 @@ class WizardQuizViewModel(
                 )
             }
         }
-    }
-
-    fun setChoiceCount(count: Int) {
-        _uiState.update { it.copy(settings = it.settings.copy(choiceCount = count)) }
     }
 
     fun setMode(mode: QuizMode) {
@@ -94,16 +92,37 @@ class WizardQuizViewModel(
             return
         }
 
-        val prepared = repository.prepareOptions(questions.first(), state.settings.choiceCount)
+        val defaultChoices = 4
+        val prepared = repository.prepareOptions(questions.first(), defaultChoices)
         _uiState.update {
             it.copy(
                 screen = QuizUiState.Screen.Question,
                 questions = questions,
                 index = 0,
+                currentChoiceCount = defaultChoices,
                 preparedQuestion = prepared,
                 selectedAnswer = null,
                 answerSubmitted = false,
                 score = 0,
+                lastAwardedPoints = 0,
+                downgradeMessage = if (prepared.wasDowngraded) {
+                    "Choix réduits à ${prepared.effectiveChoiceCount} pour cette question."
+                } else null
+            )
+        }
+    }
+
+    fun setChoiceCountForCurrentQuestion(count: Int) {
+        val state = _uiState.value
+        if (state.answerSubmitted) return
+        val currentQuestion = state.questions.getOrNull(state.index) ?: return
+
+        val prepared = repository.prepareOptions(currentQuestion, count)
+        _uiState.update {
+            it.copy(
+                currentChoiceCount = count,
+                preparedQuestion = prepared,
+                selectedAnswer = null,
                 downgradeMessage = if (prepared.wasDowngraded) {
                     "Choix réduits à ${prepared.effectiveChoiceCount} pour cette question."
                 } else null
@@ -123,10 +142,22 @@ class WizardQuizViewModel(
         if (state.answerSubmitted) return
 
         val isCorrect = selected == prepared.question.correctAnswer
-        val updatedScore = if (isCorrect) state.score + prepared.question.difficulty.bonus else state.score
+        val earnedPoints = if (isCorrect) {
+            ScoringPolicy.pointsForCorrectAnswer(
+                difficulty = prepared.question.difficulty,
+                effectiveChoiceCount = prepared.effectiveChoiceCount
+            )
+        } else {
+            0
+        }
+        val updatedScore = state.score + earnedPoints
 
         _uiState.update {
-            it.copy(answerSubmitted = true, score = updatedScore)
+            it.copy(
+                answerSubmitted = true,
+                score = updatedScore,
+                lastAwardedPoints = earnedPoints
+            )
         }
     }
 
@@ -141,7 +172,7 @@ class WizardQuizViewModel(
 
         val nextIndex = state.index + 1
         val nextQuestion = state.questions[nextIndex]
-        val prepared = repository.prepareOptions(nextQuestion, state.settings.choiceCount)
+        val prepared = repository.prepareOptions(nextQuestion, state.currentChoiceCount)
 
         _uiState.update {
             it.copy(
@@ -149,6 +180,7 @@ class WizardQuizViewModel(
                 preparedQuestion = prepared,
                 selectedAnswer = null,
                 answerSubmitted = false,
+                lastAwardedPoints = 0,
                 downgradeMessage = if (prepared.wasDowngraded) {
                     "Choix réduits à ${prepared.effectiveChoiceCount} pour cette question."
                 } else null
@@ -162,10 +194,12 @@ class WizardQuizViewModel(
                 screen = QuizUiState.Screen.Home,
                 questions = emptyList(),
                 index = 0,
+                currentChoiceCount = 4,
                 preparedQuestion = null,
                 selectedAnswer = null,
                 answerSubmitted = false,
                 score = 0,
+                lastAwardedPoints = 0,
                 downgradeMessage = null
             )
         }
