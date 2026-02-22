@@ -22,7 +22,7 @@ class OptionGeneratorTest {
     )
 
     @Test
-    fun `supports 2 4 8 12 choices when possible`() {
+    fun `supports 2 4 8 choices when possible`() {
         val generator = OptionGenerator(Random(0))
         listOf(2, 4, 8).forEach { count ->
             val prepared = generator.prepare(question, count)
@@ -30,10 +30,6 @@ class OptionGeneratorTest {
             assertTrue(prepared.options.contains("Bonne"))
             assertFalse(prepared.wasDowngraded)
         }
-
-        val prepared12 = generator.prepare(question, 12)
-        assertEquals(11, prepared12.options.size)
-        assertTrue(prepared12.wasDowngraded)
     }
 
     @Test

@@ -26,7 +26,7 @@ data class QuizUiState(
     val settings: HomeSettings = HomeSettings(),
     val questions: List<Question> = emptyList(),
     val index: Int = 0,
-    val currentChoiceCount: Int = 4,
+    val currentChoiceCount: Int? = null,
     val preparedQuestion: PreparedQuestion? = null,
     val selectedAnswer: String? = null,
     val answerSubmitted: Boolean = false,
@@ -92,22 +92,18 @@ class WizardQuizViewModel(
             return
         }
 
-        val defaultChoices = 4
-        val prepared = repository.prepareOptions(questions.first(), defaultChoices)
         _uiState.update {
             it.copy(
                 screen = QuizUiState.Screen.Question,
                 questions = questions,
                 index = 0,
-                currentChoiceCount = defaultChoices,
-                preparedQuestion = prepared,
+                currentChoiceCount = null,
+                preparedQuestion = null,
                 selectedAnswer = null,
                 answerSubmitted = false,
                 score = 0,
                 lastAwardedPoints = 0,
-                downgradeMessage = if (prepared.wasDowngraded) {
-                    "Choix réduits à ${prepared.effectiveChoiceCount} pour cette question."
-                } else null
+                downgradeMessage = null
             )
         }
     }
@@ -171,19 +167,15 @@ class WizardQuizViewModel(
         }
 
         val nextIndex = state.index + 1
-        val nextQuestion = state.questions[nextIndex]
-        val prepared = repository.prepareOptions(nextQuestion, state.currentChoiceCount)
-
         _uiState.update {
             it.copy(
                 index = nextIndex,
-                preparedQuestion = prepared,
+                currentChoiceCount = null,
+                preparedQuestion = null,
                 selectedAnswer = null,
                 answerSubmitted = false,
                 lastAwardedPoints = 0,
-                downgradeMessage = if (prepared.wasDowngraded) {
-                    "Choix réduits à ${prepared.effectiveChoiceCount} pour cette question."
-                } else null
+                downgradeMessage = null
             )
         }
     }
@@ -194,7 +186,7 @@ class WizardQuizViewModel(
                 screen = QuizUiState.Screen.Home,
                 questions = emptyList(),
                 index = 0,
-                currentChoiceCount = 4,
+                currentChoiceCount = null,
                 preparedQuestion = null,
                 selectedAnswer = null,
                 answerSubmitted = false,

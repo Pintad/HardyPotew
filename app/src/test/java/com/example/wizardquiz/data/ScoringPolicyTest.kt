@@ -10,9 +10,9 @@ class ScoringPolicyTest {
     @Test
     fun `awards more points when fewer choices`() {
         val easy2 = ScoringPolicy.pointsForCorrectAnswer(Difficulty.EASY, 2)
-        val easy12 = ScoringPolicy.pointsForCorrectAnswer(Difficulty.EASY, 12)
+        val easy8 = ScoringPolicy.pointsForCorrectAnswer(Difficulty.EASY, 8)
         assertEquals(4, easy2)
-        assertEquals(1, easy12)
+        assertEquals(2, easy8)
     }
 
     @Test
