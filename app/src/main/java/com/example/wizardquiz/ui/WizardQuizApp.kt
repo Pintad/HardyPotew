@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,9 +47,9 @@ fun WizardQuizApp(viewModel: WizardQuizViewModel) {
             .background(
                 brush = Brush.verticalGradient(
                     listOf(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
                         MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.22f)
+                        MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f)
                     )
                 )
             )
@@ -116,7 +116,7 @@ private fun HomeScreen(
                     Text("Wizard Quiz", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                 }
                 Text(
-                    "Un style d’académie magique modernisé : réponds à 10 questions offline.",
+                    "Expérience quiz repensée : rapide, claire et 100% hors-ligne.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -164,7 +164,7 @@ private fun HomeScreen(
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("Nouveau scoring", fontWeight = FontWeight.SemiBold)
-                Text("Tu choisis le nombre de propositions à chaque question (2 / 4 / 8 / 12).")
+                Text("Tu choisis le nombre de propositions à chaque question (2 / 4 / 8).")
                 Text("Moins d’options = plus de points potentiels.")
             }
         }
@@ -190,8 +190,9 @@ private fun QuestionScreen(
     onSubmit: () -> Unit,
     onNext: () -> Unit
 ) {
-    val prepared = state.preparedQuestion ?: return
-    val question = prepared.question
+    val question = state.questions.getOrNull(state.index) ?: return
+    val prepared = state.preparedQuestion
+    val options = prepared?.options.orEmpty()
 
     Column(
         modifier = Modifier
@@ -221,9 +222,9 @@ private fun QuestionScreen(
             }
         }
 
-        Text("Nombre de propositions (choisi avant validation)", fontWeight = FontWeight.SemiBold)
+        Text("Nombre de propositions", fontWeight = FontWeight.SemiBold)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf(2, 4, 8, 12).forEach { count ->
+            listOf(2, 4, 8).forEach { count ->
                 FilterChip(
                     selected = state.currentChoiceCount == count,
                     onClick = { onChoiceCountSelected(count) },
@@ -237,7 +238,20 @@ private fun QuestionScreen(
         }
         state.downgradeMessage?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
 
-        prepared.options.forEach { option ->
+        if (options.isEmpty()) {
+            Card(
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.65f))
+            ) {
+                Text(
+                    text = "Sélectionne d'abord le nombre de propositions pour afficher les réponses.",
+                    modifier = Modifier.padding(14.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        options.forEach { option ->
             val selected = state.selectedAnswer == option
             val backgroundColor = when {
                 !state.answerSubmitted && selected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
@@ -265,7 +279,7 @@ private fun QuestionScreen(
         if (!state.answerSubmitted) {
             Button(
                 onClick = onSubmit,
-                enabled = state.selectedAnswer != null,
+                enabled = state.selectedAnswer != null && prepared != null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
